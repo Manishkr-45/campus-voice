@@ -1,0 +1,172 @@
+% CampusVoice Project Report
+\documentclass[12pt]{report}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{sectsty}
+\usepackage{float}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{ragged2e}
+\usepackage[table]{xcolor}
+\definecolor{lightblue}{HTML}{ADD8E6}
+\geometry{a4paper,total={180mm,250mm},left=20mm,top=20mm, right=20mm}
+\lstset{basicstyle=\footnotesize, numbers=left, numberstyle=\tiny\color{gray}, stepnumber=1, numbersep=5pt, backgroundcolor=\color{white}, showspaces=false, showstringspaces=false, showtabs=false, frame=single, rulecolor=\color{black}, tabsize=2, captionpos=b, breaklines=true, breakatwhitespace=false, keywordstyle=\color{blue}, commentstyle=\color{dkgreen}, stringstyle=\color{mauve}}
+\begin{document}
+
+% Title page
+\begin{titlepage}
+  \pagecolor{lightblue}
+  \begin{center}
+    {\LARGE\textbf{CampusVoice}}\\[0.5cm]
+    {\Large\textit{Campus Feedback and Complaints Management System}}\\[1cm]
+    {\large\textbf{Bachelor of Technology \ in Electronics and Communication Engineering}}\\[0.8cm]
+    {\large By: Student Name (VTU12345)}\\[0.5cm]
+    \vfill
+    \includegraphics[width=0.25\textwidth]{Logo.png}\\[0.5cm]
+    {\large Department of Electronics and Communication Engineering}\\
+    {\large Vel Tech Rangarajan Dr.Sagunthala R&D Institute of Science and Technology}\\[0.6cm]
+    {\large April, 2026}
+  \end{center}
+  \nopagecolor
+\end{titlepage}
+
+% Certificate, declaration, abstract
+\pagenumbering{roman}
+\chapter*{Bonafide Certificate}
+This is to certify that the work titled "CampusVoice — Campus Feedback and Complaints Management System" by Student Name (VTU12345) has been carried out during the Winter semester 2025-2026.
+
+\clearpage
+\chapter*{Declaration}
+I declare that the work represented in this report is original and any external sources are cited.
+
+\clearpage
+\chapter*{Abstract}
+CampusVoice is a web application built with Flask (Python) and MySQL to collect, manage, and act on student feedback and complaints. The system provides secure user authentication, role-based access (students, staff, admin), complaint submission with attachments, an admin dashboard for review and action, and a lightweight REST-style API for integrations. This report documents the architecture, implementation, database schema, and usage instructions.
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+\chapter{Introduction}
+CampusVoice is designed to simplify how students submit feedback and complaints and how campus staff and administrators manage them. Core goals: shorten response time, centralize records, allow anonymous or attributed reports, and provide analytics to identify recurring issues.
+
+\section{Objectives}
+\begin{itemize}
+  \item Provide secure login and role-based access
+  \item Allow complaints and feedback submission with attachments
+  \item Provide an admin interface to review, respond and close items
+  \item Persist data in MySQL and expose basic API endpoints
+\end{itemize}
+
+\chapter{System Overview}
+\section{Technology Stack}
+\begin{itemize}
+  \item Backend: Flask (Python)
+  \item Database: MySQL (mysqlclient + Flask-MySQLdb)
+  \item Auth: Flask-Login, Flask-Bcrypt
+  \item Frontend: HTML/CSS/JavaScript (static files in `static/`)
+\end{itemize}
+
+\section{High-level Architecture}
+The application follows a modular Flask blueprint structure: `routes/auth.py`, `routes/main.py`, `routes/complaints.py`, `routes/feedback.py`, and `routes/admin.py`. Extensions are initialized in `app.py` and the database connection uses `flask_mysqldb`.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{architecture-diagram.png}
+\caption{Logical architecture (placeholder)}
+\end{figure}
+
+\chapter{Frontend Implementation}
+\section{Pages}
+\begin{itemize}
+  \item Home (`/`) — overview and links
+  \item Login / Register — user authentication
+  \item Submit Complaint / Feedback — forms with file upload
+  \item User Dashboard — status of submitted items
+  \item Admin Dashboard — list, filter, respond, close
+\end{itemize}
+
+\section{Execution Procedure}
+\begin{enumerate}
+  \item Activate virtual environment and install dependencies.
+  \item Start the Flask app and open `http://127.0.0.1:5000`.
+\end{enumerate}
+\textbf{Commands}
+\begin{verbatim}
+python -m venv venv
+.\venv\Scripts\Activate.ps1    (PowerShell)
+pip install -r requirements.txt
+cd campusvoice
+python app.py
+\end{verbatim}
+
+\chapter{Backend Implementation}
+\section{Application Structure}
+Key files:
+\begin{itemize}
+  \item `app.py` — factory creating the Flask app and initializing extensions
+  \item `models.py` — `User` model and `user_loader` integration
+  \item `routes/*.py` — blueprints for auth, main, complaints, feedback, admin
+  \item `schema.sql` — SQL to create database tables
+\end{itemize}
+
+\section{Important Endpoints}
+\begin{itemize}
+  \item `POST /api/auth/login` — login
+  \item `POST /api/auth/register` — register
+  \item `GET /api/auth/me` — current user
+  \item `POST /api/complaints` — submit complaint
+  \item `GET /api/complaints` — list complaints (admin)
+  \item `POST /api/feedback` — submit feedback
+\end{itemize}
+
+\chapter{Database Design}
+\section{Main Tables}
+\begin{description}
+  \item[users] id, username, password_hash, name, email, role
+  \item[complaints] id, user_id, title, body, status, created_at, attachment_path
+  \item[feedback] id, user_id, message, created_at
+\end{description}
+
+Example `schema.sql` snippets (already present in the repository): ensure the `users`, `complaints`, and `feedback` tables exist and that `users.id` is referenced by foreign keys.
+
+\chapter{Methodology}
+\section{Development Approach}
+Agile-style iterative development: build core auth and data persistence first, then add UI, file uploads, and admin features. Emphasized small, testable units and simple REST patterns.
+
+\chapter{Results}
+The running application provides:
+\begin{itemize}
+  \item Successful user registration and login with password hashing
+  \item Complaint submission with file upload persisted to `static/uploads/`
+  \item Admin endpoints for review and state changes
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{screenshot-home.png}
+\caption{Home page (placeholder)}
+\end{figure}
+
+\chapter{Conclusion and Future Work}
+CampusVoice centralizes feedback/complaints and provides an extensible base for additional features. Future enhancements:
+\begin{itemize}
+  \item Notifications (email / SMS) on new complaints
+  \item Analytics dashboard with trends and categories
+  \item Role-based granular permissions and audit trail
+  \item Dockerize the app for easier deployments
+\end{itemize}
+
+\chapter*{References}
+\addcontentsline{toc}{chapter}{References}
+\begin{itemize}
+  \item Flask documentation — https://flask.palletsprojects.com/
+  \item Flask-Login — https://flask-login.readthedocs.io/
+  \item MySQL-python / mysqlclient docs
+\end{itemize}
+
+\end{document}
